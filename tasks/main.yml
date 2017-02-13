@@ -1,0 +1,49 @@
+---
+- name: install dependencies
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    state: installed
+  with_items:
+    - build-essential
+    - git
+    - libffi-dev
+    - libreadline-dev
+    - libssl-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - zlib1g-dev
+  become: yes
+
+- name: install rvm config file
+  copy:
+    src: .rvmrc
+    dest: ~/.rvmrc
+  become: yes
+  become_user: "{{ ruby_user }}"
+
+- name: install rvm
+  shell: "\\curl -sSL get.rvm.io | bash -s stable"
+  args:
+    creates: ~/.rvm
+
+  become: yes
+  become_user: "{{ ruby_user }}"
+
+- name: install ruby
+  command:
+    rvm install {{ ruby_version }}
+  args:
+    creates: "{{ ruby_install_path }}"
+  environment:
+    PATH: "{{ ruby_env_PATH }}"
+  become: yes
+  become_user: "{{ ruby_user }}"
+
+- name: install bundler
+  gem:
+    name: bundler
+    state: present
+    executable: "{{ ruby_install_path }}/bin/gem"
+  become: yes
+  become_user: "{{ ruby_user }}"

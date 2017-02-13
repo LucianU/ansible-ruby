@@ -1,0 +1,8 @@
+---
+ruby_bundle_exec: rvm {{ ruby_version }} do bundle exec
+
+ruby_rvm_path: "{{ ansible_env.HOME }}/.rvm"
+ruby_bin_path: "{{ ruby_install_path }}/bin"
+ruby_install_path: "{{ ruby_rvm_path }}/rubies/ruby-{{ ruby_version }}"
+
+ruby_env_PATH: "{{ ruby_rvm_path }}/bin:{{ ansible_env.PATH }}"
